@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
-export async function POST(request:any) {
+export async function POST(request: any) {
     try {
         // TODO: Validate fields 
-        const { email, password } = await request.json()
-        console.log({ email, password });
+        const { username, email, password } = await request.json()
+        console.log({ username, email, password });
 
     } catch (error) {
         console.log({ error });
