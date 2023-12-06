@@ -16,39 +16,60 @@ import {
   NavigationMenuViewport,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import Logo from "@/components/Logo";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { ThemeProvider } from "next-themes";
 
 const Navbar = ({ session }: any) => {
   return (
-    <div className="flex justify-end">
-      <NavigationMenu className="flex justify-end">
-        <NavigationMenuList className="p-4 gap-x-8 text-xl list-none">
-          <Link href="/" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Home
-            </NavigationMenuLink>
-          </Link>
-          {!session && (
-            <>
-              <Link href="/login" legacyBehavior passHref>
+    <>
+      {/* <div className="flex justify-end">
+        <NavigationMenu className="flex justify-end">
+          <NavigationMenuList className="p-4 gap-x-8 text-xl list-none">
+            <Link href="/" legacyBehavior passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                Home
+              </NavigationMenuLink>
+            </Link>
+            
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div> */}
+      <nav className="flex justify-between p-4">
+        <Logo />
+        <div className="flex gap-x-8">
+          <ThemeSwitcher />
+          {/* <LoginButton /> */}
+          <NavigationMenu className="flex justify-end">
+            <NavigationMenuList className="">
+              {!session && (
+                <>
+                  <Link href="/login" legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      Login
+                    </NavigationMenuLink>
+                  </Link>
+                  <Link href="/register" legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      Register
+                    </NavigationMenuLink>
+                  </Link>
+                </>
+              )}
+              {!!session && (
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Login
+                  <Logout />
                 </NavigationMenuLink>
-              </Link>
-              <Link href="/register" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Register
-                </NavigationMenuLink>
-              </Link>
-            </>
-          )}
-          {!!session && (
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              <Logout />
-            </NavigationMenuLink>
-          )}
-        </NavigationMenuList>
-      </NavigationMenu>
-    </div>
+              )}
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
+      </nav>
+    </>
 
     // <nav className="w-full h-20 flex justify-end p-4 gap-x-10 text-xl list-none">
     //   <li>Home</li>
