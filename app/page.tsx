@@ -7,6 +7,7 @@ import { ReactNode, Suspense } from "react";
 import { LuView } from "react-icons/lu";
 import { RiFileTransferFill } from "react-icons/ri";
 import { LiaPercentageSolid } from "react-icons/lia";
+import { GetFormStats } from "@/actions/form";
 
 export default async function Home() {
   return (
@@ -23,18 +24,17 @@ export default async function Home() {
 }
 
 async function CardStatsWrapper() {
-  // const stats = await GetFormStats();
+  const stats = await GetFormStats();
   return (
     <StatsCards
       loading={false}
-      data={{ visits: 0, submissions: 0, submissionRate: 0 }}
+      data={stats}
     />
   );
 }
 
 interface StatsCardsProps {
-  // data?: Awaited<ReturnType<typeof GetFormStats>>;
-  data?: any;
+  data?: Awaited<ReturnType<typeof GetFormStats>>;
   loading: boolean;
 }
 
@@ -46,8 +46,7 @@ function StatsCards(props: StatsCardsProps) {
         title="Total Visits"
         icon={<LuView className="text-blue-600" />}
         helperText="All time form visits"
-        // value={data?.visits.toLocalString() || ""}
-        value={""}
+        value={data?.visits.toLocaleString() || ""}
         loading={loading}
         className="shadow-md shadow-blue-600"
       />
@@ -55,8 +54,7 @@ function StatsCards(props: StatsCardsProps) {
         title="Total Submission"
         icon={<RiFileTransferFill className="text-green-600" />}
         helperText="All time form visits"
-        // value={data?.visits.toLocalString() || ""}
-        value={""}
+        value={data?.visits.toLocaleString() || ""}
         loading={loading}
         className="shadow-md shadow-green-600"
       />
@@ -64,8 +62,7 @@ function StatsCards(props: StatsCardsProps) {
         title="Total Submission Rate"
         icon={<LiaPercentageSolid className="text-yellow-600" />}
         helperText="All time form visits"
-        // value={data?.visits.toLocalString() || ""}
-        value={""}
+        value={data?.visits.toLocaleString() || ""}
         loading={loading}
         className="shadow-md shadow-yellow-600"
       />
