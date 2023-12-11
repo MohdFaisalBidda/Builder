@@ -1,8 +1,14 @@
+import prisma from "@/lib/prisma";
 import { sql } from "@vercel/postgres";
 import { compare } from "bcrypt";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+interface User {
+    id: string,
+    username: string,
+    email: string
+}
 
 const handler = NextAuth({
     pages: {
@@ -15,21 +21,33 @@ const handler = NextAuth({
                 password: {}
             },
             async authorize(credentials, req) {
-                const response = await sql`
-                SELECT * FROM "User" WHERE email=${credentials?.email}`;
-                const user = response.rows[0];
-                const passwordCorrect = await compare(credentials?.password || "", user.password)
-                console.log({ passwordCorrect });
-                if (passwordCorrect) {
-                    return {
-                        id: user.id,
-                        username: user.username,
-                        email: user.email
+                try {
+                    const user = await prisma.user.findUnique({
+                        where: { email: credentials?.email },
+                    });
+                    if (!user) {
+                        console.error("User not found");
+                        return null;
                     }
-                }
+                    const passwordCorrect = await compare(credentials?.password || "", user.password)
+                    console.log({ passwordCorrect });
+                    if (passwordCorrect) {
+                        const userId = user.id.toString()
+                        return {
+                            id: userId,
+                            username: user.username,
+                            email: user.email
+                        } as User
+                    }
 
-                // Return null if user data could not be retrieved
-                return null
+                    // Return null if user data could not be retrieved
+                    console.error("Incorrect password");
+                    return null
+                } catch (error) {
+                    console.error("Error retrieving user", error);
+                    return null;
+
+                }
             }
         })
     ]

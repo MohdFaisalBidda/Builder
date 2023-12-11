@@ -37,7 +37,7 @@ function RegisterForm() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/register", {
         method: "POST",
         body: JSON.stringify({
           username: values.username,
@@ -45,7 +45,7 @@ function RegisterForm() {
           password: values.password,
         }),
       });
-      console.log({ response });
+      console.log("From Register Form", { response });
       router.push("/login");
     } catch (error) {
       console.log(error);
