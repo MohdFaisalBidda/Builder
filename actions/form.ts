@@ -1,6 +1,7 @@
 "use server"
 
 import prisma from "@/lib/prisma";
+import { formSchemaType } from "@/schema/form";
 import { Session, getServerSession } from "next-auth";
 
 class UserNotFoundErr extends Error { }
@@ -32,5 +33,9 @@ export async function GetFormStats() {
     }
 
     return { visits, submissions, submissionRate }
+
+}
+
+export async function CreateForm(data:formSchemaType){
 
 }
