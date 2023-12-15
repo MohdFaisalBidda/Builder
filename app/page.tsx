@@ -1,13 +1,25 @@
 // import { GetFormStats } from "@/actions/form";
 import CreateFormButton from "@/components/CreateFormButton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ReactNode, Suspense } from "react";
-import { LuView } from "react-icons/lu";
-import { RiFileTransferFill } from "react-icons/ri";
-import { LiaPercentageSolid } from "react-icons/lia";
-import { GetFormStats } from "@/actions/form";
+import { LuArrowBigRightDash, LuView } from "react-icons/lu";
+import { RiEdit2Fill, RiFileTransferFill } from "react-icons/ri";
+import { LiaPercentageSolid, LiaStumbleupon } from "react-icons/lia";
+import { GetFormStats, GetForms } from "@/actions/form";
+import { Form } from "@prisma/client";
+import { Badge } from "@/components/ui/badge";
+import { formatDistance } from "date-fns";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function Home() {
   return (
@@ -18,19 +30,23 @@ export default async function Home() {
       <Separator className="my-6" />
       <h2 className="text-4xl font-bold col-span-2'">Your Builds</h2>
       <Separator className="my-6" />
-      <CreateFormButton />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <CreateFormButton />
+        <Suspense
+          fallback={[1, 2, 3, 4].map((el) => (
+            <FormCardSkeleton key={el} />
+          ))}
+        >
+          <FormCards />
+        </Suspense>
+      </div>
     </div>
   );
 }
 
 async function CardStatsWrapper() {
   const stats = await GetFormStats();
-  return (
-    <StatsCards
-      loading={false}
-      data={stats}
-    />
-  );
+  return <StatsCards loading={false} data={stats} />;
 }
 
 interface StatsCardsProps {
@@ -105,5 +121,67 @@ function StatsCard({
         <p className="text-xs text-muted-foreground pt-1">{helperText}</p>
       </CardContent>
     </Card>
+  );
+}
+
+function FormCardSkeleton() {
+  return <Skeleton className="border-2 border-primary/20 h-[190px] w-full" />;
+}
+
+function FormCard({ form }: { form: Form }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between gap-2">
+          <span className="truncate font-bold">{form.name}</span>
+          {form.publishedAt && <Badge>Published</Badge>}
+          {!form.publishedAt && <Badge variant={"destructive"}>Draft</Badge>}
+        </CardTitle>
+        <CardDescription className="flex justify-between items-center text-muted-foreground text-sm">
+          {formatDistance(form.createdAt, new Date(), { addSuffix: true })}
+          {!form.publishedAt && (
+            <span className="flex items-center gap-2">
+              <LuView className="text-muted-foreground" />
+              <span>{form.visits.toLocaleString()}</span>
+              <LiaStumbleupon className="text-muted-foreground" />
+              <span>{form.submissions.toLocaleString()}</span>
+            </span>
+          )}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="h-[20px] truncate text-sm text-muted-foreground">
+        {form.description || "No Description"}
+      </CardContent>
+      <CardFooter>
+        {form.publishedAt && (
+          <Button asChild className="w-full mt-2 text-md gap-4">
+            <Link href={`/form/${form.id}`}>
+              View Submissions
+              <LuArrowBigRightDash />
+            </Link>
+          </Button>
+        )}
+        {!form.publishedAt && (
+          <Button asChild className="w-full mt-2 text-md gap-4">
+            <Link href={`/form/${form.id}`}>
+              Edit form
+              <RiEdit2Fill />
+            </Link>
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+}
+async function FormCards() {
+  const forms = await GetForms();
+  console.log(forms, "forms");
+
+  return (
+    <>
+      {forms?.map((form) => (
+        <FormCard key={form.id} form={form} />
+      ))}
+    </>
   );
 }

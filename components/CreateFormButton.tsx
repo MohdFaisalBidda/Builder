@@ -29,19 +29,24 @@ import { LiaSpinnerSolid } from "react-icons/lia";
 import { toast } from "./ui/use-toast";
 import { formSchema, formSchemaType } from "@/schema/form";
 import { CreateForm } from "@/actions/form";
+import { FileImage } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function CreateFormButton() {
+  const router =useRouter();
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
   });
 
   async function onSubmit(values: formSchemaType) {
     try {
-      await CreateForm(values);
+      const formId = await CreateForm(values);
       toast({
         title: "Success",
         description: "Form Created Successfully!",
       });
+      console.log(formId);
+      router.push(`/builder/${formId}`)
     } catch (error) {
       toast({
         title: "Error",
@@ -55,7 +60,12 @@ function CreateFormButton() {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button>Create New Form</Button>
+          <Button variant={"outline"} className="group border-2 border-primary/20 h-[190px] items-center justify-center flex flex-col hover:border-primary hover:cursor-pointer border-dashed gap-4">
+            <FileImage className="h-8 w-8 text-muted-foreground group-hover:text-primary"/>
+            <p className="font-bold text-xl text-muted-foreground group-hover:text-primary">
+            Create New Form
+            </p>
+            </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

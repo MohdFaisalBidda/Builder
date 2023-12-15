@@ -1,25 +1,30 @@
 "use server"
 
 import prisma from "@/lib/prisma";
-import { formSchemaType } from "@/schema/form";
+import { formSchema, formSchemaType } from "@/schema/form";
+import { getUserId } from "@/services/useUserId";
+import { Form } from "@prisma/client";
 import { Session, getServerSession } from "next-auth";
 
 class UserNotFoundErr extends Error { }
 
+
 export async function GetFormStats() {
-    const user: Session | null = await getServerSession();
-    console.log(user, "session");
-    if (user?.user?.email != undefined) {
-        // throw new UserNotFoundErr;
+    const session: Session | null = await getServerSession();
+    const userId = await getUserId(session?.user?.email);
+    console.log(typeof userId);
+
+    if (!userId) {
+        throw new UserNotFoundErr;
     }
 
-    const stats =await prisma.form.aggregate({
+    const stats = await prisma.form.aggregate({
         where: {
-            userId: user?.user?.email || "",
+            userId: userId,
         },
-        _sum:{
-            visits:true,
-            submissions:true
+        _sum: {
+            visits: true,
+            submissions: true
         }
     })
 
@@ -36,6 +41,56 @@ export async function GetFormStats() {
 
 }
 
-export async function CreateForm(data:formSchemaType){
+export async function CreateForm(data: formSchemaType) {
+    const validation = formSchema.safeParse(data);
+    if (!validation.success) {
+        throw new Error("Form is not valid")
+    }
+
+    const session: Session | null = await getServerSession();
+    const userId = await getUserId(session?.user?.email);
+    if (!userId) {
+        throw new UserNotFoundErr;
+    }
+
+    const { name, description } = data;
+
+    const form = await prisma.form.create({
+        data: {
+            userId: userId,
+            name,
+            description
+        } as any
+    })
+
+    if (!form) {
+        throw new Error("Something went wrong")
+    }
+
+    return form.id;
+}
+
+
+export async function GetForms() {
+
+    const session: Session | null = await getServerSession();
+    const userId = await getUserId(session?.user?.email);
+    if (!userId) {
+        throw new UserNotFoundErr;
+    }
+
+    try {
+        return await prisma.form.findMany({
+            where: {
+                userId: userId
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        })
+    } catch (error) {
+        console.log(error);
+
+    }
 
 }

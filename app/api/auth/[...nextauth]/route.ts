@@ -5,9 +5,10 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 interface User {
-    id: string,
-    username: string,
-    email: string
+    id: any,
+    name: string,
+    email: string,
+    userId:string
 }
 
 const handler = NextAuth({
@@ -32,12 +33,15 @@ const handler = NextAuth({
                     const passwordCorrect = await compare(credentials?.password || "", user.password)
                     console.log({ passwordCorrect });
                     if (passwordCorrect) {
-                        const userId = user.id.toString()
+                        const { id, username, email, password } = user;
+                        console.log(user);
                         return {
-                            id: userId,
-                            username: user.username,
-                            email: user.email
-                        } as User
+                            id:id,
+                            username,
+                            email,
+                            password
+                        } as any
+                        
                     }
 
                     // Return null if user data could not be retrieved

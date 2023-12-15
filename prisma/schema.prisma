@@ -20,8 +20,8 @@ model User {
 model Form {
   id          Int      @id @default(autoincrement())
   userId      String
-  createdAt   DateTime
-  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  publishedAt Boolean @default(false)
   name        String
   description String   @default("")
   content     String   @default("[]")
