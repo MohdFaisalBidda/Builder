@@ -155,7 +155,7 @@ function FormCard({ form }: { form: Form }) {
       <CardFooter>
         {form.publishedAt && (
           <Button asChild className="w-full mt-2 text-md gap-4">
-            <Link href={`/form/${form.id}`}>
+            <Link href={`/forms/${form.id}`}>
               View Submissions
               <LuArrowBigRightDash />
             </Link>
@@ -163,7 +163,7 @@ function FormCard({ form }: { form: Form }) {
         )}
         {!form.publishedAt && (
           <Button asChild className="w-full mt-2 text-md gap-4">
-            <Link href={`/form/${form.id}`}>
+            <Link href={`/builder/${form.id}`}>
               Edit form
               <RiEdit2Fill />
             </Link>
