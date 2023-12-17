@@ -1,13 +1,30 @@
-"use client"
+"use client";
 
-import React from 'react'
+import React from "react";
+import DesignerSideBar from "./DesignerSideBar";
+import { useDroppable } from "@dnd-kit/core";
+import DragOverlayWrapper from "./DragOverlayWrapper";
 
 function Designer() {
+  const designer = useDroppable({
+    id: "designer-drop-area",
+    data: {
+      isDesignerDropArea: true,
+    },
+  });
   return (
-    <div>
-      Designer
+    <div className="flex w-full h-full">
+      <div className="p-4 w-full">
+        <div className="bg-background max-w-full h-full m-auto rounded-xl flex flex-col flex-grow items-center justify-start flex-1 overflow-y-auto">
+          <p className="text-md md:text-3xl text-muted-foreground flex flex-grow items-center font-bold">
+            Drop Here
+          </p>
+        </div>
+      </div>
+      <DragOverlayWrapper/>
+      <DesignerSideBar />
     </div>
-  )
+  );
 }
 
-export default Designer
+export default Designer;
