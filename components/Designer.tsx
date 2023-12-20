@@ -2,7 +2,12 @@
 
 import React, { useState } from "react";
 import DesignerSideBar from "./DesignerSideBar";
-import { DragEndEvent, useDndMonitor, useDroppable } from "@dnd-kit/core";
+import {
+  DragEndEvent,
+  useDndMonitor,
+  useDraggable,
+  useDroppable,
+} from "@dnd-kit/core";
 import DragOverlayWrapper from "./DragOverlayWrapper";
 import {
   ElementsType,
@@ -16,7 +21,8 @@ import { Button } from "./ui/button";
 import { LiaTrashSolid } from "react-icons/lia";
 
 function Designer() {
-  const { elements, addElement, deleteElement } = useDesigner();
+  const { elements, addElement, selectedElement, setSelectedElement } =
+    useDesigner();
   const droppable = useDroppable({
     id: "designer-drop-area",
     data: {
@@ -43,7 +49,12 @@ function Designer() {
 
   return (
     <div className="flex w-full h-full">
-      <div className="p-4 w-full">
+      <div
+        className="p-4 w-full"
+        onClick={() => {
+          if (selectedElement) setSelectedElement(null);
+        }}
+      >
         <div
           ref={droppable.setNodeRef}
           className={`bg-background max-w-full h-full m-auto rounded-xl flex flex-col flex-grow items-center justify-start flex-1 overflow-y-auto ${
@@ -55,7 +66,7 @@ function Designer() {
               Drop Here
             </p>
           )}
-          {droppable.isOver && (
+          {droppable.isOver && !(elements.length > 0) && (
             <div className="p-4 w-full">
               <div className="h-[120px] rounded-md bg-primary/20"></div>
             </div>
@@ -76,7 +87,7 @@ function Designer() {
 
 function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
   const [mouseIsOver, setMouseIsOver] = useState<boolean>(false);
-  const { deleteElement } = useDesigner();
+  const { deleteElement, selectedElement, setSelectedElement } = useDesigner();
   const topHalf = useDroppable({
     id: element.id + "-top",
     data: {
@@ -95,12 +106,32 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
     },
   });
 
+  const draggable = useDraggable({
+    id: element.id + "-drag-handler",
+    data: {
+      type: element.type,
+      elementId: element.id,
+      isDesignerElement: true,
+    },
+  });
+
+  if (draggable.isDragging) return;
+
+  console.log("SELECTED EL", selectedElement);
+
   const DesignerElement = FormElements[element.type].designerComponent;
   return (
     <div
+      ref={draggable.setNodeRef}
+      {...draggable.listeners}
+      {...draggable.attributes}
       className="relative h-[120px] flex flex-col text-foreground hover:cursor-pointer rounded-md ring-1 ring-accent ring-inset"
       onMouseEnter={() => setMouseIsOver(true)}
       onMouseLeave={() => setMouseIsOver(false)}
+      onClick={(e) => {
+        e.stopPropagation();
+        setSelectedElement(element);
+      }}
     >
       <div
         ref={topHalf.setNodeRef}
@@ -114,8 +145,10 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
         <>
           <div className="absolute right-0 h-full">
             <Button
-              onClick={() => {console.log(element.id);
-              deleteElement(element.id)}}
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteElement(element.id);
+              }}
               className="flex justify-center h-full border rounded-md rounded-l-none bg-red-500"
               variant={"outline"}
             >
@@ -129,6 +162,9 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
           </div>
         </>
       )}
+      {topHalf.isOver && (
+        <div className="absolute top-0 w-full rounded-md h-[7px] bg-primary rounded-b-none"></div>
+      )}
       <div
         className={`flex w-full h-[120px] items-center rounded-md bg-accent/40 px-4 py-2 pointer-events-none ${
           mouseIsOver && "opacity-30"
@@ -136,6 +172,9 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
       >
         <DesignerElement elementInstance={element} />
       </div>
+      {bottomHalf.isOver && (
+        <div className="absolute bottom-0 w-full rounded-md h-[7px] bg-primary rounded-t-none"></div>
+      )}
     </div>
   );
 }
