@@ -21,8 +21,13 @@ import { Button } from "./ui/button";
 import { LiaTrashSolid } from "react-icons/lia";
 
 function Designer() {
-  const { elements, addElement, selectedElement, setSelectedElement } =
-    useDesigner();
+  const {
+    elements,
+    addElement,
+    selectedElement,
+    setSelectedElement,
+    deleteElement,
+  } = useDesigner();
   const droppable = useDroppable({
     id: "designer-drop-area",
     data: {
@@ -32,15 +37,95 @@ function Designer() {
 
   useDndMonitor({
     onDragEnd: (event: DragEndEvent) => {
+      // -----------Three scenario to achieve while drag and drop sidebar elements and designer elements-----------
+      // (1)[SideBarElement Drag and Drop to Designer area which should be in order]
+      // (2)[Drag the SidebarElement  over/between the designer Element]
+      // (3)[Drag the designer element over/between other designer element]
+
       const { active, over } = event;
+      console.log(event, over);
+
       if (!active || !over) return;
+
+      //(1) First scenario
+      const isDroppingOverDesignerArea = over.data.current?.isDesignerDropArea;
       const isDesignedBtnElement = active.data.current?.isDesignedBtnElement;
-      if (isDesignedBtnElement) {
+
+      const isSidebarBtnElementDroppingOverDesignerArea =
+        isDroppingOverDesignerArea && isDesignedBtnElement;
+
+      if (isSidebarBtnElementDroppingOverDesignerArea) {
         const type = active.data.current?.type;
         const newElement = FormElements[type as ElementsType].construct(
           idGenerator()
         );
-        addElement(0, newElement);
+        addElement(elements.length, newElement);
+        return;
+      }
+
+      //Second Scenario
+      const isDroppingOverDesignerElementTopHalf =
+        over.data.current?.isTopHalfDesignerElement;
+      const isDroppingOverDesignerElementBottomHalf =
+        over.data.current?.isBottomHalfDesignerElement;
+
+      const isDroppingOverDesignerElement =
+        isDroppingOverDesignerElementTopHalf ||
+        isDroppingOverDesignerElementBottomHalf;
+
+      const isDroppingSideBarBtnOverDesignerElement =
+        isDesignedBtnElement && isDroppingOverDesignerElement;
+
+      if (isDroppingSideBarBtnOverDesignerElement) {
+        const type = active.data.current?.type;
+        const newElement = FormElements[type as ElementsType].construct(
+          idGenerator()
+        );
+        const overId = over.data.current?.elementId;
+
+        const overElementIndex = elements.findIndex((el) => el.id === overId);
+        if (overElementIndex === -1) {
+          throw new Error("Element Not Found");
+        }
+
+        let indexForNewElement = overElementIndex;
+
+        if (isDroppingOverDesignerElementBottomHalf) {
+          indexForNewElement = overElementIndex + 1;
+        }
+
+        addElement(indexForNewElement, newElement);
+        return;
+      }
+
+      //Third Scenario
+      const isDraggingDesignerElement = active.data.current?.isDesignerElement;
+      const isDraggingDesignerElementOverOtherElement =
+        isDraggingDesignerElement && isDroppingOverDesignerElement;
+      if (isDraggingDesignerElementOverOtherElement) {
+        const activeId = active.data.current?.elementId;
+        const overId = over.data.current?.elementId;
+
+        const activeElementIndex = elements.findIndex(
+          (el) => el.id === activeId
+        );
+        const overElementIndex = elements.findIndex((el) => el.id === overId);
+
+        if (activeElementIndex === -1 || overElementIndex === -1) {
+          throw new Error("Element not Found");
+        }
+        const activeElement = { ...elements[activeElementIndex] };
+        console.log(activeElement, "active Element");
+
+        deleteElement(activeId);
+
+        let indexForNewElement = overElementIndex;
+
+        if (isDroppingOverDesignerElementBottomHalf) {
+          indexForNewElement = overElementIndex + 1;
+        }
+
+        addElement(indexForNewElement, activeElement);
       }
     },
   });
@@ -58,7 +143,7 @@ function Designer() {
         <div
           ref={droppable.setNodeRef}
           className={`bg-background max-w-full h-full m-auto rounded-xl flex flex-col flex-grow items-center justify-start flex-1 overflow-y-auto ${
-            droppable.isOver && "ring-2 ring-primary/20"
+            droppable.isOver && "ring-4 ring-primary"
           }`}
         >
           {!droppable.isOver && !(elements.length > 0) && (

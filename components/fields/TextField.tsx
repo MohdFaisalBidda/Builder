@@ -54,7 +54,7 @@ export const TextFieldFormElement: FormElement = {
     label: "Text",
   },
   designerComponent: DesignerComponent,
-  formComponent: () => <div>Desinger Comp</div>,
+  formComponent: FormComponent,
   propertiesComponent: PropertiesComponent,
 };
 
@@ -63,6 +63,53 @@ type CustomInstance = FormElementInstance & {
 };
 
 type PropertiesFormSchemaType = z.infer<typeof propertiesSchema>;
+
+function DesignerComponent({
+  elementInstance,
+}: {
+  elementInstance: FormElementInstance;
+}) {
+  const element = elementInstance as CustomInstance;
+  const { label, require, placeholder, helperText } = element.extraAttributes;
+  return (
+    <div className="flex gap-4 flex-col w-full">
+      <Label>
+        {label}
+        {require && "*"}
+      </Label>
+      <Input
+        readOnly
+        disabled
+        placeholder={placeholder}
+        className="bg-transparent"
+      />
+      {helperText && (
+        <p className="text-muted-foreground text-[0.8rem]">{helperText}</p>
+      )}
+    </div>
+  );
+}
+
+function FormComponent({
+  elementInstance,
+}: {
+  elementInstance: FormElementInstance;
+}) {
+  const element = elementInstance as CustomInstance;
+  const { label, require, placeholder, helperText } = element.extraAttributes;
+  return (
+    <div className="flex gap-4 flex-col w-full">
+      <Label>
+        {label}
+        {require && "*"}
+      </Label>
+      <Input placeholder={placeholder} className="bg-transparent" />
+      {helperText && (
+        <p className="text-muted-foreground text-[0.8rem]">{helperText}</p>
+      )}
+    </div>
+  );
+}
 
 function PropertiesComponent({
   elementInstance,
@@ -140,9 +187,7 @@ function PropertiesComponent({
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                The Placeholder field
-              </FormDescription>
+              <FormDescription>The Placeholder field</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -164,7 +209,7 @@ function PropertiesComponent({
                 />
               </FormControl>
               <FormDescription>
-              The helper text of field <br />
+                The helper text of field <br />
                 It will be displayed below the field
               </FormDescription>
               <FormMessage />
@@ -177,44 +222,22 @@ function PropertiesComponent({
           render={({ field }) => (
             <FormItem className="flex justify-between items-center rounded-lg border p-3 shadow-md">
               <div className="space-x-0.5">
-              <FormLabel>Label</FormLabel>
-              <FormDescription>
-              The required check for the <br />text field.
-              </FormDescription>
+                <FormLabel>Label</FormLabel>
+                <FormDescription>
+                  The required check for the <br />
+                  text field.
+                </FormDescription>
               </div>
               <FormControl>
-                <Switch checked={field.value} onCheckedChange={field.onChange}/> 
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
               </FormControl>
             </FormItem>
           )}
         />
       </form>
     </Form>
-  );
-}
-
-function DesignerComponent({
-  elementInstance,
-}: {
-  elementInstance: FormElementInstance;
-}) {
-  const element = elementInstance as CustomInstance;
-  const { label, require, placeholder, helperText } = element.extraAttributes;
-  return (
-    <div className="flex gap-4 flex-col w-full">
-      <Label>
-        {label}
-        {require && "*"}
-      </Label>
-      <Input
-        readOnly
-        disabled
-        placeholder={placeholder}
-        className="bg-transparent"
-      />
-      {helperText && (
-        <p className="text-muted-foreground text-[0.8rem]">{helperText}</p>
-      )}
-    </div>
   );
 }
