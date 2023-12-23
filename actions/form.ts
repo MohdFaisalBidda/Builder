@@ -114,3 +114,40 @@ export async function getFormById(id: number) {
 
     }
 }
+
+
+export async function UpdateFormContent(id: number, jsonElements: string) {
+    const session: Session | null = await getServerSession();
+    const userId = await getUserId(session?.user?.email);
+    if (!userId) {
+        throw new UserNotFoundErr;
+    }
+
+    return await prisma.form.update({
+        where: {
+            userId: userId,
+            id
+        },
+        data: {
+            content: jsonElements
+        }
+    })
+}
+
+export async function PublishedForm(id: number) {
+    const session: Session | null = await getServerSession();
+    const userId = await getUserId(session?.user?.email);
+    if (!userId) {
+        throw new UserNotFoundErr;
+    }
+
+    return await prisma.form.update({
+        where: {
+            userId: userId,
+            id
+        },
+        data: {
+            publishedAt: true
+        }
+    })
+}
