@@ -57,7 +57,7 @@ interface StatsCardsProps {
 function StatsCards(props: StatsCardsProps) {
   const { data, loading } = props;
   return (
-    <div className="w-full pt-8 gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+    <div className="w-full pt-8 gap-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
       <StatsCard
         title="Total Visits"
         icon={<LuView className="text-blue-600" />}
@@ -70,7 +70,7 @@ function StatsCards(props: StatsCardsProps) {
         title="Total Submission"
         icon={<RiFileTransferFill className="text-green-600" />}
         helperText="All time form visits"
-        value={data?.visits.toLocaleString() || ""}
+        value={data?.submissions.toLocaleString() || ""}
         loading={loading}
         className="shadow-md shadow-green-600"
       />
@@ -78,7 +78,7 @@ function StatsCards(props: StatsCardsProps) {
         title="Total Submission Rate"
         icon={<LiaPercentageSolid className="text-yellow-600" />}
         helperText="All time form visits"
-        value={data?.visits.toLocaleString() || ""}
+        value={data?.submissionRate.toLocaleString() || ""}
         loading={loading}
         className="shadow-md shadow-yellow-600"
       />
@@ -86,7 +86,7 @@ function StatsCards(props: StatsCardsProps) {
   );
 }
 
-function StatsCard({
+export function StatsCard({
   title,
   icon,
   helperText,
