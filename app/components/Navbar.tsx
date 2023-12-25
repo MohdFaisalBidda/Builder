@@ -19,8 +19,11 @@ import {
 import Logo from "@/components/Logo";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { ThemeProvider } from "next-themes";
+import { usePathname, useRouter } from "next/navigation";
 
 const Navbar = ({ session }: any) => {
+  const path =usePathname();
+  const submit =path.includes("/submit")
   return (
     <>
       {/* <div className="flex justify-end">
@@ -60,7 +63,7 @@ const Navbar = ({ session }: any) => {
                   </Link>
                 </>
               )}
-              {!!session && (
+              {!!session && !submit && (
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   <Logout />
                 </NavigationMenuLink>

@@ -134,12 +134,12 @@ function FormCard({ form }: { form: Form }) {
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-2">
           <span className="truncate font-bold">{form.name}</span>
-          {form.publishedAt && <Badge>Published</Badge>}
-          {!form.publishedAt && <Badge variant={"destructive"}>Draft</Badge>}
+          {form.published && <Badge>Published</Badge>}
+          {!form.published && <Badge variant={"destructive"}>Draft</Badge>}
         </CardTitle>
         <CardDescription className="flex justify-between items-center text-muted-foreground text-sm">
           {formatDistance(form.createdAt, new Date(), { addSuffix: true })}
-          {!form.publishedAt && (
+          {!form.published && (
             <span className="flex items-center gap-2">
               <LuView className="text-muted-foreground" />
               <span>{form.visits.toLocaleString()}</span>
@@ -153,7 +153,7 @@ function FormCard({ form }: { form: Form }) {
         {form.description || "No Description"}
       </CardContent>
       <CardFooter>
-        {form.publishedAt && (
+        {form.published && (
           <Button asChild className="w-full mt-2 text-md gap-4">
             <Link href={`/forms/${form.id}`}>
               View Submissions
@@ -161,7 +161,7 @@ function FormCard({ form }: { form: Form }) {
             </Link>
           </Button>
         )}
-        {!form.publishedAt && (
+        {!form.published && (
           <Button asChild className="w-full mt-2 text-md gap-4">
             <Link href={`/builder/${form.id}`}>
               Edit form

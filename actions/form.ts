@@ -147,7 +147,23 @@ export async function PublishedForm(id: number) {
             id
         },
         data: {
-            publishedAt: true
+            published: true
+        }
+    })
+}
+
+export async function GetFromContentByURL(formURL: string) {
+    return await prisma.form.update({
+        select: {
+            content: true
+        },
+        data: {
+            visits: {
+                increment: 1
+            }
+        },
+        where: {
+            shareURL: formURL
         }
     })
 }

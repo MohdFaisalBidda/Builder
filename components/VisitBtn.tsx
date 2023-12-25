@@ -17,7 +17,7 @@ function VisitBtn({ shareUrl }: { shareUrl: string }) {
         window.open(shareLink, "_blank");
       }}
     >
-      Visits
+      Visit
     </Button>
   );
 }

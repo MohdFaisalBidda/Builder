@@ -54,7 +54,7 @@ function FormBuilder({ form }: { form: Form }) {
   }
   const shareURL = `${window.location.origin}/submit/${form.shareURL}`;
 
-  if (form.publishedAt) {
+  if (form.published) {
     return (
       <>
       <Confetti height={window.innerHeight} width={window.innerWidth} recycle={false} numberOfPieces={500}/>
@@ -107,7 +107,7 @@ function FormBuilder({ form }: { form: Form }) {
           </h2>
           <div className="flex items-center gap-2">
             <PreviewDialogueBtn />
-            {!form.publishedAt && (
+            {!form.published && (
               <>
                 <SaveFormBtn id={form.id} />
                 <PublishedFormBtn id={form.id} />
