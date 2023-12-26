@@ -53,7 +53,7 @@ function RegisterForm() {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center">
+    <div className="w-full flex flex-col justify-center items-center">
       <h1 className="text-2xl font-bold my-8">Register</h1>
       <Form {...form}>
         <form

@@ -34,7 +34,7 @@ export default async function RootLayout({
           >
             <div className="flex flex-col min-h-screen min-w-full bg-background max-h-screen">
               <Navbar session={session} />
-              <main className="flex w-full flex-grow">
+              <main className="flex h-screen w-full flex-grow">
                 {children}
                 <Toaster/>
               </main>
