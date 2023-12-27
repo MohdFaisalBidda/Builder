@@ -182,7 +182,25 @@ export async function SubmitForm(formURL: string, content: string) {
         },
         where: {
             shareURL: formURL,
-            published:true
+            published: true
+        }
+    })
+}
+
+export async function GetFromWithSubmissions(id: number) {
+    const session: Session | null = await getServerSession();
+    const userId = await getUserId(session?.user?.email);
+    if (!userId) {
+        throw new UserNotFoundErr;
+    }
+
+    return await prisma.form.findUnique({
+        where: {
+            userId: userId,
+            id
+        },
+        include: {
+            FormSubmissions: true
         }
     })
 }

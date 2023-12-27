@@ -84,7 +84,7 @@ function FormBuilder({ form }: { form: Form }) {
               </Link>
             </Button>
             <Button asChild variant={"link"}>
-              <Link href={`forms/${form.id}`}>
+              <Link href={`/forms/${form.id}`}>
               Form Details 
               <ArrowRight/>
               </Link>

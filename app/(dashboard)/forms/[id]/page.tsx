@@ -1,9 +1,19 @@
-import { getFormById } from "@/actions/form";
+import { GetFromWithSubmissions, getFormById } from "@/actions/form";
 import { StatsCard } from "@/app/page";
 import FormBuilder from "@/components/FormBuilder";
+import { ElementsType, FormElementInstance } from "@/components/FormElements";
 import FormLinkShare from "@/components/FormLinkShare";
 import VisitBtn from "@/components/VisitBtn";
-import React from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatDistance } from "date-fns";
+import React, { ReactNode } from "react";
 import { LiaPercentageSolid } from "react-icons/lia";
 import { LuView } from "react-icons/lu";
 import { RiFileTransferFill } from "react-icons/ri";
@@ -77,10 +87,82 @@ async function FormDetails({
 
 export default FormDetails;
 
-function SubmissionTable({ id }: { id: number }) {
+type Row = { [key: string]: string } & {
+  createdAt: Date;
+};
+
+async function SubmissionTable({ id }: { id: number }) {
+  const form = await GetFromWithSubmissions(id);
+  if (!form) {
+    throw new Error("Form not found");
+  }
+  const formElements = JSON.parse(form?.content) as FormElementInstance[];
+  const columns: {
+    id: string;
+    label: string;
+    require: boolean;
+    type: ElementsType;
+  }[] = [];
+
+  formElements.forEach((element) => {
+    switch (element.type) {
+      case "TextField":
+        columns.push({
+          id: element.id,
+          label: element.extraAttributes?.label,
+          require: element.extraAttributes?.require,
+          type: element.type,
+        });
+        break;
+      default:
+        break;
+    }
+  });
+
+  const rows: Row[] = [];
+  form.FormSubmissions.forEach((submission) => {
+    const content = JSON.parse(submission.content);
+    rows.push({ ...content, createdAt: submission.createdAt });
+  });
+
   return (
     <>
       <div className="text-2xl font-bold my-4">Submissions</div>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {columns.map((column) => (
+                <TableHead key={column.id}>{column.label}</TableHead>
+              ))}
+              <TableHead className="text-right">Created At</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row, index) => (
+              <TableRow key={index}>
+                {columns.map((column) => (
+                  <RowCell
+                    key={column.id}
+                    type={column.type}
+                    value={row[column.id]}
+                  />
+                ))}
+                <TableCell className="text-muted-foreground text-right">
+                  {formatDistance(row.createdAt, new Date(), {
+                    addSuffix: true,
+                  })}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </>
   );
+}
+
+function RowCell({ type, value }: { type: ElementsType; value: string }) {
+  let node: ReactNode = value;
+  return <TableCell>{node}</TableCell>;
 }
