@@ -13,7 +13,7 @@ function PropertiesFormSideBar() {
   return (
     <div className="flex flex-col p-2">
       <div className="flex justify-between items-center">
-        <p className="text-sm text-foreground/70">Element Properties</p>
+        <p className="text-sm text-foreground/70">{selectedElement.type} Properties</p>
         <Button size={"icon"} variant={"ghost"} onClick={()=>{
             setSelectedElement(null)
         }}>

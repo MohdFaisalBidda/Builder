@@ -20,6 +20,8 @@ function FormElementsSidebar() {
         <SideBarBtnElement formElement={FormElements.NumberField} />
         <SideBarBtnElement formElement={FormElements.TextAreaField} />
         <SideBarBtnElement formElement={FormElements.DateField} />
+        <SideBarBtnElement formElement={FormElements.SelectField} />
+        <SideBarBtnElement formElement={FormElements.CheckBoxField} />
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import FormBuilder from "@/components/FormBuilder";
 import { ElementsType, FormElementInstance } from "@/components/FormElements";
 import FormLinkShare from "@/components/FormLinkShare";
 import VisitBtn from "@/components/VisitBtn";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -12,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatDistance } from "date-fns";
+import { format, formatDistance } from "date-fns";
 import React, { ReactNode } from "react";
 import { LiaPercentageSolid } from "react-icons/lia";
 import { LuView } from "react-icons/lu";
@@ -107,6 +108,11 @@ async function SubmissionTable({ id }: { id: number }) {
   formElements.forEach((element) => {
     switch (element.type) {
       case "TextField":
+      case "NumberField":
+      case "TextAreaField":
+      case "DateField":
+      case "SelectField":
+      case "CheckBoxField":
         columns.push({
           id: element.id,
           label: element.extraAttributes?.label,
@@ -164,5 +170,17 @@ async function SubmissionTable({ id }: { id: number }) {
 
 function RowCell({ type, value }: { type: ElementsType; value: string }) {
   let node: ReactNode = value;
+
+  switch (type) {
+    case "DateField":
+      if(!value) break;
+      const date =new Date(value);
+      node =format(date,"dd/MM/yyyy");
+      break;
+    case "CheckBoxField":
+      const check = value === "true";
+      node = <Checkbox checked={check} disabled />;
+      break;
+  }
   return <TableCell>{node}</TableCell>;
 }
