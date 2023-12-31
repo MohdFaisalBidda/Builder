@@ -307,7 +307,7 @@ function PropertiesComponent({
               </div>
               <div className="flex flex-col gap-2">
                 {form.watch("options").map((op, index) => (
-                  <div className="flex items-center gap-1 justify-between">
+                  <div key={index} className="flex items-center gap-1 justify-between">
                     <Input
                       placeholder=""
                       value={op}

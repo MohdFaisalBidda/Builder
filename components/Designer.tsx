@@ -158,7 +158,7 @@ function Designer() {
           )}
           {elements.length > 0 &&
             elements.map((element) => (
-              <div className="flex flex-col w-full gap-2 p-4">
+              <div key={element.id} className="flex flex-col w-full gap-2 p-4">
                 <DesignerElementWrapper key={element.id} element={element} />
               </div>
             ))}

@@ -4,7 +4,7 @@ import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect } from "react";
 
-function error({ error }: { error: Error }) {
+function Error({ error }: { error: Error }) {
   useEffect(() => {
     console.log(error);
   }, [error]);
@@ -19,4 +19,4 @@ function error({ error }: { error: Error }) {
   );
 }
 
-export default error;
+export default Error;
