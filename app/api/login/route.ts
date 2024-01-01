@@ -3,7 +3,7 @@ import { compare, hash } from "bcrypt";
 import { sql } from "@vercel/postgres";
 import { useRouter } from "next/navigation";
 import prisma from "@/lib/prisma";
-
+export const dynamic = 'force-dynamic' 
 export async function GET(request: any) {
     const router = useRouter()
     try {
