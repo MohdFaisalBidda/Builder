@@ -5,6 +5,7 @@ import { formSchema, formSchemaType } from "@/schema/form";
 import { getUserId } from "@/services/useUserId";
 import { Form } from "@prisma/client";
 import { Session, getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 class UserNotFoundErr extends Error { }
 
@@ -15,7 +16,7 @@ export async function GetFormStats() {
     console.log(typeof userId);
 
     if (!userId) {
-        throw new UserNotFoundErr;
+        redirect("/login")
     }
 
     const stats = await prisma.form.aggregate({
@@ -50,7 +51,7 @@ export async function CreateForm(data: formSchemaType) {
     const session: Session | null = await getServerSession();
     const userId = await getUserId(session?.user?.email);
     if (!userId) {
-        throw new UserNotFoundErr;
+        redirect("/login")
     }
 
     const { name, description } = data;
@@ -76,7 +77,7 @@ export async function GetForms() {
     const session: Session | null = await getServerSession();
     const userId = await getUserId(session?.user?.email);
     if (!userId) {
-        throw new UserNotFoundErr;
+        redirect("/login")
     }
 
     try {
@@ -99,7 +100,7 @@ export async function getFormById(id: number) {
     const session: Session | null = await getServerSession();
     const userId = await getUserId(session?.user?.email);
     if (!userId) {
-        throw new UserNotFoundErr;
+        redirect("/login")
     }
 
     try {
@@ -120,7 +121,7 @@ export async function UpdateFormContent(id: number, jsonElements: string) {
     const session: Session | null = await getServerSession();
     const userId = await getUserId(session?.user?.email);
     if (!userId) {
-        throw new UserNotFoundErr;
+        redirect("/login")
     }
 
     return await prisma.form.update({
@@ -138,7 +139,7 @@ export async function PublishedForm(id: number) {
     const session: Session | null = await getServerSession();
     const userId = await getUserId(session?.user?.email);
     if (!userId) {
-        throw new UserNotFoundErr;
+        redirect("/login")
     }
 
     return await prisma.form.update({
@@ -191,7 +192,7 @@ export async function GetFromWithSubmissions(id: number) {
     const session: Session | null = await getServerSession();
     const userId = await getUserId(session?.user?.email);
     if (!userId) {
-        throw new UserNotFoundErr;
+        redirect("/login")
     }
 
     return await prisma.form.findUnique({

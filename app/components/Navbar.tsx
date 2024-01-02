@@ -40,7 +40,7 @@ const Navbar = ({ session }: any) => {
       </div> */}
       <nav className="flex justify-between p-4">
         <Logo />
-        <div className="flex gap-x-8">
+        <div className="flex flex-col items-center gap-5 sm:gap-x-8 sm:flex-row ">
           <ThemeSwitcher />
           {/* <LoginButton /> */}
           <NavigationMenu className="flex justify-end">

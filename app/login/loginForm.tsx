@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Loader2 } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   email: z.string().min(2).max(50),
@@ -42,9 +44,17 @@ function LoginForm() {
       redirect: false,
     });
     console.log({ response });
+    if (response?.error) {
+      toast({
+        title: "Invalid Credentials!",
+      });
+    }
     if (!response?.error) {
       router.push("/");
       router.refresh();
+      toast({
+        title: "Logged in Successfully!",
+      });
     }
   }
 
@@ -86,7 +96,13 @@ function LoginForm() {
               </FormItem>
             )}
           />
-          <Button className="w-full" type="submit">Submit</Button>
+          <Button className="w-full" type="submit">
+            {form.formState.isSubmitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </form>
       </Form>
     </div>

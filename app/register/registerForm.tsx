@@ -15,6 +15,8 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
@@ -45,8 +47,15 @@ function RegisterForm() {
           password: values.password,
         }),
       });
+      if (response.ok) {
+        router.push("/login");
+      }
+      if(!response.ok){
+        toast({
+          title:"User already exists !"
+        })
+      }
       console.log("From Register Form", { response });
-      router.push("/login");
     } catch (error) {
       console.log(error);
     }
@@ -104,7 +113,11 @@ function RegisterForm() {
             )}
           />
           <Button className="w-full" type="submit">
-            Submit
+            {form.formState.isSubmitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Submit"
+            )}
           </Button>
         </form>
       </Form>
