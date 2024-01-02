@@ -49,6 +49,9 @@ function RegisterForm() {
       });
       if (response.ok) {
         router.push("/login");
+        toast({
+          title:"User Registered Successfully !"
+        })
       }
       if(!response.ok){
         toast({

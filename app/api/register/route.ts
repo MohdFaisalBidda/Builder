@@ -16,7 +16,7 @@ export async function POST(request: any) {
         console.log("From Register Route", response);
     } catch (error) {
         console.log("error", { error });
-        return error
+        return NextResponse.error();
     }
 
     return NextResponse.json({ message: "success" })
