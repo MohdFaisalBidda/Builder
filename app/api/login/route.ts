@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { compare, hash } from "bcrypt";
 import { sql } from "@vercel/postgres";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import prisma from "@/lib/prisma";
 export const dynamic = 'force-dynamic' 
 export async function GET(request: any) {
